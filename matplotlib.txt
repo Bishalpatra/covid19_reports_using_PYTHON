@@ -1,0 +1,673 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+#load the covid-19 india dataset
+df = pd.read_csv("D:/f/dvasp.csv")
+
+#change the state column name
+df = df.rename(columns={"State/UnionTerritory": "State"})
+
+#print it
+#df
+#print(df["State"].unique())
+#plot the data counts per state
+plt.figure(figsize=(10, 20))
+
+
+#add order to order the plot
+sns.countplot(y="State", data=df, palette="cubehelix", order = df['State'].value_counts().index)
+
+#show graphic
+plt.show()
+
+
+# In[2]:
+
+
+import pandas as pd
+import numpy as np 
+import seaborn as sns
+import matplotlib.pyplot as plt
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+import warnings
+warnings.filterwarnings('ignore')
+
+
+# In[13]:
+
+
+corona_df = pd.read_csv('D:/f/covid19.csv')
+
+
+# In[14]:
+
+
+corona_df.head(5)
+
+
+# In[15]:
+
+
+corona_df.tail(5)
+
+
+# In[6]:
+
+
+corona_df.isnull().sum()
+
+
+# In[16]:
+
+
+corona_df.duplicated().sum()
+
+
+# In[17]:
+
+
+corona_df.info()
+
+
+# In[18]:
+
+
+corona_df = corona_df.drop(['Sno','Time','ConfirmedIndianNational', 'ConfirmedForeignNational'], axis=1)
+
+
+# In[19]:
+
+
+corona_df.head()
+
+
+# In[22]:
+
+
+corona_df['Active'] = corona_df['Confirmed'] - corona_df['Cured'] - corona_df['Deaths']
+corona_df = corona_df.sort_values(['Date', 'State/UnionTerritory']).reset_index(drop=True)
+corona_df.head()
+
+
+# In[23]:
+
+
+corona_df = corona_df.rename(columns={'State/UnionTerritory':'States','Cured':'Recovered'})
+
+
+# In[24]:
+
+
+corona_df.head()
+
+
+# In[25]:
+
+
+corona_df['Active'] = corona_df['Confirmed'] - corona_df['Recovered'] - corona_df['Deaths']
+
+
+# In[26]:
+
+
+corona_df.head()
+
+
+# In[27]:
+
+
+corona_df['Date'] = pd.to_datetime(corona_df['Date'])
+
+
+# In[28]:
+
+
+corona_df.head()
+
+
+# In[29]:
+
+
+india_cases = corona_df[corona_df['Date'] == corona_df['Date'].max()].copy().fillna(0)
+india_cases.index = india_cases["States"]
+india_cases = india_cases.drop(['States', 'Date'], axis=1)
+
+
+# In[30]:
+
+
+india_cases.head()
+
+
+# In[31]:
+
+
+df = pd.DataFrame(pd.to_numeric(india_cases.sum())).transpose()
+df.style.background_gradient(cmap='RdPu',axis=1)
+
+
+# In[32]:
+
+
+india_cases.sort_values('Confirmed', ascending= False).style    .background_gradient(cmap='BrBG_r', subset=['Confirmed'])    .background_gradient(cmap='YlGn_r', subset=["Deaths"])    .background_gradient(cmap='YlOrBr',subset=['Recovered'])    .background_gradient(cmap='BuPu', subset=['Active'])
+
+
+# In[67]:
+
+
+# This Python 3 environment comes with many helpful analytics libraries installed
+# It is defined by the kaggle/python Docker image: https://github.com/kaggle/docker-python
+# For example, here's several helpful packages to load
+
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+
+# Input data files are available in the read-only "../input/" directory
+# For example, running this (by clicking run or pressing Shift+Enter) will list all files under the input directory
+
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+# You can write up to 20GB to the current directory (/kaggle/working/) that gets preserved as output when you create a version using "Save & Run All" 
+# You can also write temporary files to /kaggle/temp/, but they won't be saved outside of the current session
+
+
+# In[68]:
+
+
+Testing = pd.read_csv('D:/f/StatewiseTestingDetails.csv')
+Testing.head()
+
+
+# In[69]:
+
+
+Summary = pd.read_csv('D:/f/covid19.csv')
+Summary.head()
+
+
+# In[70]:
+
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+from matplotlib.dates import DateFormatter
+from matplotlib import pyplot
+import warnings; warnings.simplefilter('ignore')
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+
+# In[71]:
+
+
+Testing.isnull().sum()
+
+
+# In[72]:
+
+
+Testing.Negative = Testing.Negative.fillna('0') 
+Testing.Positive = Testing.Positive.fillna('0') 
+
+
+# In[73]:
+
+
+Testing.head()
+
+
+# In[74]:
+
+
+Summary.isnull().sum()
+
+
+# In[75]:
+
+
+Summary['State/UnionTerritory'].unique()
+
+
+# In[76]:
+
+
+Summary['State/UnionTerritory'].unique()
+
+
+# In[77]:
+
+
+Summary.rename(columns = {'State/UnionTerritory':'State'},inplace=True)
+
+
+# In[78]:
+
+
+Summary
+
+
+# In[79]:
+
+
+Summary['State'].unique()
+
+
+# In[80]:
+
+
+Summary=Summary.replace('Telengana','Telangana')
+Summary=Summary.replace('Telengana***','Telangana')
+Summary=Summary.replace('Telangana***','Telangana')
+Summary=Summary.replace('Maharashtra***','Maharashtra')
+Summary=Summary.replace('Chandigarh***','Chandigarh')
+Summary=Summary.replace('Punjab***','Punjab')
+
+
+# In[81]:
+
+
+dropn_indexnames =Summary[(Summary['State'] == 'Cases being reassigned to states')].index 
+Summary.drop(dropn_indexnames,inplace=True)
+
+
+# In[82]:
+
+
+dropn_indexnames =Summary[(Summary['State'] == 'Cases being reassigned to states')].index 
+Summary.drop(dropn_indexnames,inplace=True)
+
+
+# In[83]:
+
+
+Summary['State'].unique()
+
+
+# In[84]:
+
+
+Summary.isnull().sum()
+
+
+# In[85]:
+
+
+Testing.isnull().sum()
+
+
+# In[86]:
+
+
+Summary.describe()
+
+
+# In[87]:
+
+
+df = Summary.tail(35) ## Extract most recent date's info & data
+df1 = df.sort_values(by='Confirmed', ascending=False).head(10)
+
+
+# In[88]:
+
+
+Testing = Testing.astype({'Positive': 'int32'})
+
+
+# In[89]:
+
+
+Testing.dtypes
+
+
+# In[90]:
+
+
+x = df['Confirmed'].sum()
+y = df['Cured'].sum()
+z= df['Deaths'].sum()
+active= x-y
+print('Total Confirmed cases =',x)
+print('Total Cured cases =',y)
+print('Total Active cases =',active)
+print('Total Death cases =',z)
+barp = sns.barplot(x=['Confirmed','Cured','Deaths','active'],y=[x,y,z,active])
+barp.set_yticklabels(labels=(barp.get_yticks()*1).astype(int))
+plt.show()
+
+
+# In[91]:
+
+
+a4_dims = (13, 7)
+fig, ax = pyplot.subplots(figsize=a4_dims)
+barp = sns.barplot(data=df1,x='State',y='Confirmed',ax=ax)
+barp.set_yticklabels(labels=(barp.get_yticks()*1).astype(int))
+plt.show()
+
+
+# In[100]:
+
+
+Odisha = Summary[Summary.State == 'Odisha']
+Odisha
+
+
+# In[101]:
+
+
+req = Kerala[Kerala['Date'].isin(['30/03/20','30/04/20','30/05/20','30/06/20','30/07/20','30/08/20','30/09/20','30/10/20','30/11/20','30/12/20'])]
+
+
+# In[102]:
+
+
+req
+
+
+# In[103]:
+
+
+a4_dims = (13, 7)
+fig, ax = pyplot.subplots(figsize=a4_dims)
+pp = sns.lineplot(data=req,x='Date',y='Confirmed',ax=ax,color='Blue')
+pp = sns.lineplot(data=req,x='Date',y='Cured',ax=ax,color='Green')
+pp = sns.lineplot(data=req,x='Date',y='Deaths',ax=ax,color='Red')
+pp.set_yticklabels(labels=(pp.get_yticks()*1).astype(int))
+fig.legend(labels=['Confirmed','Cured','Deaths'])
+plt.title('Vulnerability summary of Kerala',size=15)
+plt.show()
+
+
+# In[107]:
+
+
+Odisha = Summary[Summary.State == 'Odisha']
+Odisha
+
+
+# In[110]:
+
+
+req = Odisha[Odisha['Date'].isin(['30/03/20','30/04/20','30/05/20','30/06/20','30/07/20','30/08/20','30/09/20','30/10/20','30/11/20','30/12/20'])]
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[133]:
+
+
+# CHECK
+
+
+# In[137]:
+
+
+Summary.head()
+
+
+# In[138]:
+
+
+Summary['State'].value_counts()
+
+
+# In[139]:
+
+
+req.shape
+
+
+# In[141]:
+
+
+data_ = Summary['State'].unique()
+
+
+# In[142]:
+
+
+data_
+
+
+# In[161]:
+
+
+for i in data_:
+    df = Summary[Summary['State'] == i]
+#     print(df.head(1))
+    req = df[df['Date'].isin(['30/03/20','30/04/20','30/05/20','30/06/20','30/07/20','30/08/20','30/09/20','30/10/20','30/11/20','30/12/20'])]
+    a4_dims = (13, 7)
+    fig, ax = pyplot.subplots(figsize=a4_dims)
+    pp = sns.lineplot(data=req,x='Date',y='Confirmed',ax=ax,color='Blue')
+    pp = sns.lineplot(data=req,x='Date',y='Cured',ax=ax,color='Green')
+    pp = sns.lineplot(data=req,x='Date',y='Deaths',ax=ax,color='Red')
+    pp.set_yticklabels(labels=(pp.get_yticks()*1).astype(int))
+    fig.legend(labels=['Confirmed','Cured','Deaths'])
+    print(i)
+    plt.title('Vulnerability summary of ',size=15)
+    plt.show()
+
+
+# In[153]:
+
+
+df.head(1)
+
+
+# In[162]:
+
+
+for i in data_:
+    df = Summary[Summary['State'] == i]
+#     print(df.head(1))
+    req = df[df['Date'].isin(['30/03/20','30/04/20','30/05/20','30/06/20','30/07/20','30/08/20','30/09/20','30/10/20','30/11/20','30/12/20'])]
+    a4_dims = (13, 7)
+    fig, ax = pyplot.subplots(figsize=a4_dims)
+    pp = sns.lineplot(data=req,x='Date',y='Confirmed',ax=ax,color='Blue')
+#     pp = sns.lineplot(data=req,x='Date',y='Cured',ax=ax,color='Green')
+#     pp = sns.lineplot(data=req,x='Date',y='Deaths',ax=ax,color='Red')
+    pp.set_yticklabels(labels=(pp.get_yticks()*1).astype(int))
+    fig.legend(labels=['Confirmed','Cured','Deaths'])
+    print(i)
+    plt.title('Vulnerability summary of ',size=15)
+    plt.show()
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[111]:
+
+
+req
+
+
+# In[131]:
+
+
+a4_dims = (13, 7)
+fig, ax = pyplot.subplots(figsize=a4_dims)
+pp = sns.lineplot(data=req,x='Date',y='Confirmed',ax=ax,color='Blue')
+pp = sns.lineplot(data=req,x='Date',y='Cured',ax=ax,color='Green')
+pp = sns.lineplot(data=req,x='Date',y='Deaths',ax=ax,color='Red')
+pp.set_yticklabels(labels=(pp.get_yticks()*1).astype(int))
+fig.legend(labels=['Confirmed','Cured', 'de'])
+plt.title('Vulnerability summary of Odisha',size=15)
+plt.show()
+
+
+# In[128]:
+
+
+a4_dims = (13, 7)
+fig, ax = pyplot.subplots(figsize=a4_dims)
+pp = sns.lineplot(data=req,x='Date',y='Confirmed',ax=ax,color='Blue')
+pp = sns.lineplot(data=req,x='Date',y='Cured',ax=ax,color='Green')
+# pp = sns.lineplot(data=req,x='Date',y='Deaths',ax=ax,color='Red')
+pp.set_yticklabels(labels=(pp.get_yticks()*1).astype(int))
+fig.legend(labels=['Confirmed','Cured'])
+plt.title('Vulnerability summary of Odisha',size=15)
+plt.show()
+
+
+# In[129]:
+
+
+a4_dims = (13, 7)
+fig, ax = pyplot.subplots(figsize=a4_dims)
+pp = sns.lineplot(data=req,x='Date',y='Deaths',ax=ax,color='Red')
+pp.set_yticklabels(labels=(pp.get_yticks()*1).astype(int))
+fig.legend(labels=['Deaths'])
+plt.title('Vulnerability summary of Odisha',size=15)
+plt.show()
+
+
+# In[132]:
+
+
+a4_dims = (13, 7)
+fig, ax = pyplot.subplots(figsize=a4_dims)
+pp = sns.barplot(data=req,x='Date',y='Confirmed',ax=ax,color='Blue')
+pp = sns.barplot(data=req,x='Date',y='Cured',ax=ax,color='green')
+pp = sns.barplot(data=req,x='Date',y='Deaths',ax=ax,color='red')
+pp.set_yticklabels(labels=(pp.get_yticks()*1).astype(int))
+fig.legend(labels=['Confirmed','Cured','Deaths'])
+plt.title('Vulnerability summary of Kerala',size=15)
+plt.show()
+
+
+# In[122]:
+
+
+a4_dims = (13, 7)
+fig, ax = pyplot.subplots(figsize=a4_dims)
+pp = sns.lineplot(data=req,x='Date',y='Confirmed',ax=ax,color='Blue')
+pp = sns.lineplot(data=req,x='Date',y='Cured',ax=ax,color='Green')
+pp = sns.lineplot(data=req,x='Date',y='Deaths',ax=ax,color='Red')
+pp.set_yticklabels(labels=(pp.get_yticks()*1).astype(int))
+fig.legend(labels=['Confirmed','Cured','Deaths'])
+plt.title('Vulnerability summary of Maharashtra',size=15)
+plt.show()
+
+
+# In[1]:
+
+
+import pandas as pd
+import numpy as np 
+import seaborn as sns
+import matplotlib.pyplot as plt
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+import warnings
+warnings.filterwarnings('ignore')
+corona_df = pd.read_csv('D:/f/covid19.csv')
+corona_df.head(5)
+
+
+# In[2]:
+
+
+corona_df.tail(5)
+
+
+# In[3]:
+
+
+corona_df.isnull().sum()
+
+
+# In[4]:
+
+
+corona_df = corona_df.drop(['Sno','Time','ConfirmedIndianNational', 'ConfirmedForeignNational'], axis=1)
+
+
+# In[5]:
+
+
+corona_df.head()
+
+
+# In[8]:
+
+
+def horizontal_bar_chart(df, x, y, title, x_label, y_label, color):
+    fig = px.bar(df, x=x, y=y, orientation='h', title=title, 
+                 labels={x.name: x_label,
+                         y.name: y_label}, color_discrete_sequence=[color])
+    fig.update_layout(yaxis={'categoryorder': 'total ascending'})
+    fig.show()
+
+
+# In[9]:
+
+
+import plotly.express as px
+
+
+# In[ ]:
+
+
+
+
